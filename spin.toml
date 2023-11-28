@@ -1,0 +1,18 @@
+spin_manifest_version = 2
+
+[application]
+name = "hello-wasi-http"
+version = "1.0.0"
+
+[[trigger.http]]
+route = "/"
+component = "hello"
+
+[component.hello]
+source = "main.component.wasm"
+[component.hello.build]
+command = """go generate && 
+    tinygo build -o main.wasm -target=wasi main.go && 
+    wasm-tools component embed /Users/mossaka/Developer/mossaka/hello-wasi-http-go/wit main.wasm > main.embed.wasm && 
+    wasm-tools component new main.embed.wasm -o main.component.wasm --adapt /Users/mossaka/Developer/mossaka/hello-wasi-http-go/wasi_snapshot_preview1.reactor.wasm
+"""

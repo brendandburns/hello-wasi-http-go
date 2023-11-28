@@ -100,6 +100,66 @@ and say hi!
 
 [proxy]: https://github.com/WebAssembly/wasi-http/blob/main/wit/proxy.wit
 
+## Running in Spin 2.0
+
+To run this component in Spin 2.0, you'll need to first download the Spin 2.0 runtime from [here](https://github.com/fermyon/spin/releases/tag/v2.0.1)
+
+Then, you'll need to create a `spin.toml` file in the same directory as the `main.component.wasm` file. The `spin.toml` file should look like this:
+
+```toml
+spin_manifest_version = 2
+
+[application]
+name = "hello-wasi-http"
+version = "1.0.0"
+
+[[trigger.http]]
+route = "/"
+component = "hello"
+
+[component.hello]
+source = "main.component.wasm"
+[component.hello.build]
+command = """go generate && 
+    tinygo build -o main.wasm -target=wasi main.go && 
+    wasm-tools component embed /Users/mossaka/Developer/mossaka/hello-wasi-http-go/wit main.wasm > main.embed.wasm && 
+    wasm-tools component new main.embed.wasm -o main.component.wasm --adapt /Users/mossaka/Developer/mossaka/hello-wasi-http-go/wasi_snapshot_preview1.reactor.wasm
+"""
+```
+
+This repo has a `spin.toml` file already
+
+Then, you can run the component with the following command:
+
+```sh
+$ spin up --build
+Building component hello with `go generate && 
+    tinygo build -o main.wasm -target=wasi main.go && 
+    wasm-tools component embed /Users/mossaka/Developer/mossaka/hello-wasi-http-go/wit main.wasm > main.embed.wasm && 
+    wasm-tools component new main.embed.wasm -o main.component.wasm --adapt /Users/mossaka/Developer/mossaka/hello-wasi-http-go/wasi_snapshot_preview1.reactor.wasm
+`
+Generating "target_world/target-world.go"
+Generating "target_world/target-world_types.go"
+Generating "target_world/target_world.c"
+Generating "target_world/target_world.h"
+Generating "target_world/target_world_component_type.o"
+Finished building all Spin components
+Logging component stdio to ".spin/logs/"
+
+Serving http://127.0.0.1:3000
+Available Routes:
+  hello: http://127.0.0.1:3000
+```
+
+With that running, in another window, we can now make requests!
+
+```
+$ curl http://127.0.0.1:3000
+Hello world from Go!!!
+```
+
+
+
 ## Creating this repo
 
 TODO: Add instructions for creating this repo from scratch.

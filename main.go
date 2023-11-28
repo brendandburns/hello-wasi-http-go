@@ -19,7 +19,7 @@ func (h HttpImpl) Handle(_request handler.ExportsWasiHttp0_2_0_rc_2023_10_18_Inc
 	handler.StaticResponseOutparamSet(response_out, res_result)
 
 	out := body.Write().Unwrap()
-	out.BlockingWriteAndFlush([]uint8("Hello world from Go!!!")).Unwrap()
+	out.BlockingWriteAndFlush([]uint8("Hello world from Go!!!\n")).Unwrap()
 	handler.StaticOutgoingBodyFinish(body, handler.None[handler.WasiHttp0_2_0_rc_2023_10_18_TypesTrailers]())
 }
 
