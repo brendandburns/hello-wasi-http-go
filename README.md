@@ -122,8 +122,8 @@ source = "main.component.wasm"
 [component.hello.build]
 command = """go generate && 
     tinygo build -o main.wasm -target=wasi main.go && 
-    wasm-tools component embed /Users/mossaka/Developer/mossaka/hello-wasi-http-go/wit main.wasm > main.embed.wasm && 
-    wasm-tools component new main.embed.wasm -o main.component.wasm --adapt /Users/mossaka/Developer/mossaka/hello-wasi-http-go/wasi_snapshot_preview1.reactor.wasm
+    wasm-tools component embed wit main.wasm > main.embed.wasm && 
+    wasm-tools component new main.embed.wasm -o main.component.wasm --adapt wasi_snapshot_preview1.reactor.wasm
 """
 ```
 
@@ -135,8 +135,8 @@ Then, you can run the component with the following command:
 $ spin up --build
 Building component hello with `go generate && 
     tinygo build -o main.wasm -target=wasi main.go && 
-    wasm-tools component embed /Users/mossaka/Developer/mossaka/hello-wasi-http-go/wit main.wasm > main.embed.wasm && 
-    wasm-tools component new main.embed.wasm -o main.component.wasm --adapt /Users/mossaka/Developer/mossaka/hello-wasi-http-go/wasi_snapshot_preview1.reactor.wasm
+    wasm-tools component embed wit main.wasm > main.embed.wasm && 
+    wasm-tools component new main.embed.wasm -o main.component.wasm --adapt wasi_snapshot_preview1.reactor.wasm
 `
 Generating "target_world/target-world.go"
 Generating "target_world/target-world_types.go"
