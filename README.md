@@ -1,57 +1,71 @@
-# Hello WASI HTTP!
+# Hello WASI HTTP from Golang!
+
+> This is a folked version of the [hello-wasi-http](https://github.com/sunfishcode/hello-wasi-http) repository. It has been updated to create a component out of Go code instead of Rust code. The modified README.md is below.
 
 This is a simple tutorial to get started with WASI HTTP using the
-`wasmtime serve` command in [Wasmtime] 14.0. It runs an HTTP server and
+`wasmtime serve` command in [Wasmtime] 14.0.3. It runs an HTTP server and
 forwards requests to a Wasm component via the [WASI HTTP] API.
 
 [Wasmtime]: https://wasmtime.dev
 [WASI HTTP]: https://github.com/WebAssembly/wasi-http/
 
 The WASI HTTP API is settling down but as of this writing not quite stable.
-This tutorial uses a snapshot of it that's implemented in Wasmtime 14.0.0.
+This tutorial uses a snapshot of it that's implemented in Wasmtime 14.0.3.
 
 With that said...
 
-## Let's go!
+## Let's Go!
 
-First, [install `cargo component`](https://github.com/bytecodealliance/cargo-component#requirements),
-version 0.4.1, which is a tool for building Wasm components implemented in
-Rust. (See [here] for information about building Wasm components from other
+First, [install `tinygo`](https://github.com/tinygo-org/tinygo/releases),
+version 0.30.0, which is a LLVM-based Go compiler alternative. (See [here] for information about building Wasm components from other
 languages too!)
 
 [here]: https://component-model.bytecodealliance.org/language-support.html
 
+Then, [install `wit-bindgen-cli`](https://github.com/bytecodealliance/wit-bindgen) rev 1af7e87066854894ab140d2a630a0bc23c8b126f (will update this when a new version is released) with `cargo install wit-bindgen-cli --git https://github.com/bytecodealliance/wit-bindgen --rev 1af7e87066854894ab140d2a630a0bc23c8b126f`, which is a tool for generating Go bindings for WIT interfaces.
+
+Lastly, [install `wasm-tools`](https://github.com/bytecodealliance/wasm-tools/releases/) version 1.0.48, which is a tool for building Wasm components.
+
 With that, build the Wasm component from the source in this repository:
+
 ```sh
-$ cargo component build
-   Compiling hello-wasi-http v0.0.0 (/home/wasm/hello-wasi-http)
-    Finished dev [unoptimized + debuginfo] target(s) in 0.17s
-    Creating component /home/wasm/hello-wasi-http/target/wasm32-wasi/debug/hello_wasi_http.wasm
-$
+$ go generate
+Generating "target_world/target-world.go"
+Generating "target_world/target-world_types.go"
+Generating "target_world/target_world.c"
+Generating "target_world/target_world.h"
+Generating "target_world/target_world_component_type.o"
+$ tinygo build -o main.wasm -target=wasi main.go
 ```
 
-This builds a Wasm component, `target/wasm32-wasi/debug/hello_wasi_http.wasm`.
+This builds a Wasm module, `main.wasm`.
+
+Next, we'll need to create a Wasm component.
+
+```sh
+$ wasm-tools component embed wit main.wasm > main.embed.wasm
+$ wasm-tools component new main.embed.wasm -o main.component.wasm --adapt wasi_snapshot_preview1.reactor.wasm
+```
+
+This creates a Wasm component, `main.component.wasm`.
 
 To run it, we'll need at least Wasmtime 14.0.3. Installation instructions are
-on [wasmtime.dev]:
-
-```sh
-$ curl https://wasmtime.dev/install.sh -sSf | bash
-```
-
-[wasmtime.dev]: https://wasmtime.dev/
+on [wasmtime](https://github.com/bytecodealliance/wasmtime/releases/tag/v14.0.3) repo.
 
 Then, in a new terminal, we can run `wasmtime serve` on our Wasm component:
+
 ```
-$ wasmtime serve target/wasm32-wasi/debug/hello_wasi_http.wasm
+$ wasmtime serve main.component.wasm
 ```
+
 This starts up an HTTP server on `0.0.0.0:8080` (the specific address and port
 can be configured with the `--addr=` flag).
 
 With that running, in another window, we can now make requests!
+
 ```
 $ curl http://localhost:8080
-Hello, wasi:http/proxy world!
+Hello world from Go!!!
 ```
 
 ## Notes
@@ -88,49 +102,4 @@ and say hi!
 
 ## Creating this repo
 
-Here are my notes on how I created this repository, in case you're interested
-in recreating it.
-
-Run `cargo-component new --reactor` to create a new project:
-
-```sh
-$ cargo component new --reactor hello-wasi-http
-     Created binary (application) `hello-wasi-http` package
-     Updated manifest of package `hello-wasi-http`
-   Generated source file `src/main.rs`
-$ cd hello-wasi-http
-```
-
-Copy the `wit` directory from Wasmtime 14.0.0, to ensure that we're using the
-same version of the API that Wasmtime is built with:
-
-<https://github.com/bytecodealliance/wasmtime/tree/release-14.0.0>
-
-I then manually trimmed the filesystem and sockets dependencies out.
-
-In the future, we'll have wit dependencies stored in a registry, which will
-make this all much easier.
-
-I derived `src/lib.rs` from Wasmtime's
-`crates/test-programs/src/bin/api_proxy.rs` contents on the `main` branch,
-adapted it to work with cargo component, in particular by adding:
-
-```rust
-cargo_component_bindings::generate!();
-```
-
-and renaming the `T` type to `Component`, which the bindings expect.
-
-Add dependencies:
-```
-$ cargo component add --target --path wit/deps/clocks wasi:clocks
-$ cargo component add --target --path wit/deps/io wasi:io
-$ cargo component add --target --path wit/deps/random wasi:random
-$ cargo component add --target --path wit/deps/cli wasi:cli
-$ cargo component add --target --path wit/deps/logging wasi:logging
-```
-These don't all actually get used in this tutorial, but they're currently
-needed because of some of the interfaces we copied in from the Wasmtime tree
-reference them.
-
-TODO: I should also make a api_proxy_streaming.rs version to show streaming.
+TODO: Add instructions for creating this repo from scratch.
