@@ -1,6 +1,6 @@
 package main
 
-import (handler "github.com/Mossaka/hello-wasi-http-go/target_world")
+import (handler "github.com/Mossaka/hello-wasi-http-go/target_world/2023_10_18")
 
 func init() {
 	a := HttpImpl{}
@@ -23,5 +23,5 @@ func (h HttpImpl) Handle(_request handler.ExportsWasiHttp0_2_0_rc_2023_10_18_Inc
 	handler.StaticOutgoingBodyFinish(body, handler.None[handler.WasiHttp0_2_0_rc_2023_10_18_TypesTrailers]())
 }
 
-//go:generate wit-bindgen tiny-go wit --out-dir=target_world --gofmt
+//go:generate wit-bindgen tiny-go wit/2023_10_18 --out-dir=target_world/2023_10_18 --gofmt
 func main() {}

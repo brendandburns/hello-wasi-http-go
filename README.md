@@ -30,12 +30,15 @@ With that, build the Wasm component from the source in this repository:
 
 ```sh
 $ go generate
-Generating "target_world/target-world.go"
-Generating "target_world/target-world_types.go"
-Generating "target_world/target_world.c"
-Generating "target_world/target_world.h"
-Generating "target_world/target_world_component_type.o"
-$ tinygo build -o main.wasm -target=wasi main.go
+Generating "target_world/2023_10_18/target-world.go"
+Generating "target_world/2023_10_18/target-world_types.go"
+Generating "target_world/2023_10_18/target_world.c"
+Generating "target_world/2023_10_18/target_world.h"
+Generating "target_world/2023_11_10/target-world.go"
+Generating "target_world/2023_11_10/target-world_types.go"
+Generating "target_world/2023_11_10/target_world.c"
+Generating "target_world/2023_11_10/target_world.h"
+$ tinygo build -o main_2023_10_18.wasm -target=wasi main_2023_10_18.go
 ```
 
 This builds a Wasm module, `main.wasm`.
@@ -43,13 +46,13 @@ This builds a Wasm module, `main.wasm`.
 Next, we'll need to create a Wasm component.
 
 ```sh
-$ wasm-tools component embed wit main.wasm > main.embed.wasm
-$ wasm-tools component new main.embed.wasm -o main.component.wasm --adapt wasi_snapshot_preview1.reactor.wasm
+$ wasm-tools component embed wit main_2023_10_18.wasm > main_2023_10_18.embed.wasm
+$ wasm-tools component new main_2023_10_18.embed.wasm -o main_2023_10_18.component.wasm --adapt wasi_snapshot_preview1.reactor.wasm
 ```
 
-This creates a Wasm component, `main.component.wasm`.
+This creates a Wasm component, `main_2023_10_18.component.wasm`.
 
-To run it, we'll need at least Wasmtime 14.0.3. Installation instructions are
+To run it, we'll need Wasmtime `v14.0.3`` but not the `v15` or above. Installation instructions are
 on [wasmtime](https://github.com/bytecodealliance/wasmtime/releases/tag/v14.0.3) repo.
 
 Then, in a new terminal, we can run `wasmtime serve` on our Wasm component:
@@ -118,12 +121,12 @@ route = "/"
 component = "hello"
 
 [component.hello]
-source = "main.component.wasm"
+source = "main_2023_10_18.component.wasm"
 [component.hello.build]
 command = """go generate && 
-    tinygo build -o main.wasm -target=wasi main.go && 
-    wasm-tools component embed wit main.wasm > main.embed.wasm && 
-    wasm-tools component new main.embed.wasm -o main.component.wasm --adapt wasi_snapshot_preview1.reactor.wasm
+    tinygo build -o main_2023_10_18.wasm -target=wasi main_2023_10_18.go && 
+    wasm-tools component embed wit/2023_10_18 main_2023_10_18.wasm > main_2023_10_18.embed.wasm && 
+    wasm-tools component new main_2023_10_18.embed.wasm -o main_2023_10_18.component.wasm --adapt wasi_snapshot_preview1.reactor.2023_10_18.wasm
 """
 ```
 
@@ -134,15 +137,18 @@ Then, you can run the component with the following command:
 ```sh
 $ spin up --build
 Building component hello with `go generate && 
-    tinygo build -o main.wasm -target=wasi main.go && 
-    wasm-tools component embed wit main.wasm > main.embed.wasm && 
-    wasm-tools component new main.embed.wasm -o main.component.wasm --adapt wasi_snapshot_preview1.reactor.wasm
+    tinygo build -o main_2023_10_18.wasm -target=wasi main_2023_10_18.go && 
+    wasm-tools component embed wit/2023_10_18 main_2023_10_18.wasm > main_2023_10_18.embed.wasm && 
+    wasm-tools component new main_2023_10_18.embed.wasm -o main_2023_10_18.component.wasm --adapt wasi_snapshot_preview1.reactor.2023_10_18.wasm
 `
-Generating "target_world/target-world.go"
-Generating "target_world/target-world_types.go"
-Generating "target_world/target_world.c"
-Generating "target_world/target_world.h"
-Generating "target_world/target_world_component_type.o"
+Generating "target_world/2023_10_18/target-world.go"
+Generating "target_world/2023_10_18/target-world_types.go"
+Generating "target_world/2023_10_18/target_world.c"
+Generating "target_world/2023_10_18/target_world.h"
+Generating "target_world/2023_11_10/target-world.go"
+Generating "target_world/2023_11_10/target-world_types.go"
+Generating "target_world/2023_11_10/target_world.c"
+Generating "target_world/2023_11_10/target_world.h"
 Finished building all Spin components
 Logging component stdio to ".spin/logs/"
 
