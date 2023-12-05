@@ -26,7 +26,7 @@ RUN curl -LO https://github.com/fermyon/spin/releases/download/v2.0.1/spin-v2.0.
     mv spin /usr/local/bin
 
 ## go
-RUN curl -Lo go_installer https://get.golang.org/linux && chmod +x go_installer && ./go_installer && rm go_installer
+RUN curl -Lo go_installer https://get.golang.org/linux && chmod +x go_installer && ./go_installer -version 1.21.4 && rm go_installer
 
 ENV PATH="/usr/local/go/bin:${PATH}"
 ENV GOPATH="/usr/local/go"
