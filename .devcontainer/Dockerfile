@@ -1,6 +1,6 @@
 # See here for image contents: https://github.com/microsoft/vscode-dev-containers/tree/v0.234.0/containers/python-3/.devcontainer/base.Dockerfile
 
-# [Choice] Debian OS version (use bullseye on local arm64/Apple Silicon): buster, bullseye
+# [Choice] Debian OS version (use bullseye on local amd64/Apple Silicon): buster, bullseye
 ARG VARIANT="bullseye"
 FROM mcr.microsoft.com/vscode/devcontainers/rust:${VARIANT} AS build
 
@@ -8,21 +8,21 @@ RUN rustup default stable
 RUN rustup target add wasm32-wasi
 
 # TinyGo installation, see https://tinygo.org/getting-started/install/linux/ for instructions
-ARG TINYGO_URL="https://github.com/tinygo-org/tinygo/releases/download/v0.30.0/tinygo0.30.0.linux-arm64.tar.gz"
-RUN curl -sL "$TINYGO_URL" -o tinygo_arm64.tar.gz && \
-    tar -xzf tinygo_arm64.tar.gz && \
+ARG TINYGO_URL="https://github.com/tinygo-org/tinygo/releases/download/v0.30.0/tinygo0.30.0.linux-amd64.tar.gz"
+RUN curl -sL "$TINYGO_URL" -o tinygo_amd64.tar.gz && \
+    tar -xzf tinygo_amd64.tar.gz && \
     mv tinygo /usr/local/tinygo
 
 RUN cargo install wit-bindgen-cli --git https://github.com/bytecodealliance/wit-bindgen --rev 1af7e87066854894ab140d2a630a0bc23c8b126f
 
 ## wasm-tools
-RUN curl -LO https://github.com/bytecodealliance/wasm-tools/releases/download/wasm-tools-1.0.48/wasm-tools-1.0.48-aarch64-linux.tar.gz && \
-    tar -xzf wasm-tools-1.0.48-aarch64-linux.tar.gz && \
-    mv wasm-tools-1.0.48-aarch64-linux/wasm-tools /usr/local/bin
+RUN curl -LO https://github.com/bytecodealliance/wasm-tools/releases/download/wasm-tools-1.0.48/wasm-tools-1.0.48-amd64-linux.tar.gz && \
+    tar -xzf wasm-tools-1.0.48-amd64-linux.tar.gz && \
+    mv wasm-tools-1.0.48-amd64-linux/wasm-tools /usr/local/bin
 
 ## spin
-RUN curl -LO https://github.com/fermyon/spin/releases/download/v2.0.1/spin-v2.0.1-linux-aarch64.tar.gz && \
-    tar -xzf spin-v2.0.1-linux-aarch64.tar.gz && \
+RUN curl -LO https://github.com/fermyon/spin/releases/download/v2.0.1/spin-v2.0.1-linux-amd64.tar.gz && \
+    tar -xzf spin-v2.0.1-linux-amd64.tar.gz && \
     mv spin /usr/local/bin
 
 ## go
