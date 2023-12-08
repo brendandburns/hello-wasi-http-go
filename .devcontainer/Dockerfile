@@ -16,9 +16,9 @@ RUN curl -sL "$TINYGO_URL" -o tinygo_amd64.tar.gz && \
 RUN cargo install wit-bindgen-cli --git https://github.com/bytecodealliance/wit-bindgen --rev 1af7e87066854894ab140d2a630a0bc23c8b126f
 
 ## wasm-tools
-RUN curl -LO https://github.com/bytecodealliance/wasm-tools/releases/download/wasm-tools-1.0.48/wasm-tools-1.0.48-amd64-linux.tar.gz && \
-    tar -xzf wasm-tools-1.0.48-amd64-linux.tar.gz && \
-    mv wasm-tools-1.0.48-amd64-linux/wasm-tools /usr/local/bin
+RUN curl -LO https://github.com/bytecodealliance/wasm-tools/releases/download/wasm-tools-1.0.54/wasm-tools-1.0.54-x86_64-linux.tar.gz && \
+    tar -xzf wasm-tools-1.0.48-x86_64-linux.tar.gz && \
+    mv wasm-tools-1.0.48-x86_64-linux/wasm-tools /usr/local/bin
 
 ## spin
 RUN curl -LO https://github.com/fermyon/spin/releases/download/v2.0.1/spin-v2.0.1-linux-amd64.tar.gz && \
