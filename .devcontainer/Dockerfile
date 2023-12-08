@@ -27,7 +27,7 @@ RUN curl -LO https://github.com/fermyon/spin/releases/download/v2.0.1/spin-v2.0.
 
 ## go
 RUN curl -LO https://go.dev/dl/go1.21.4.linux-amd64.tar.gz && \
-    tar -C /usr/local -xzf go1.21.4.linux-amd4.tar.gz
+    tar -C /usr/local -xzf go1.21.4.linux-amd64.tar.gz
 
 ENV PATH="/usr/local/go/bin:${PATH}"
 ENV GOPATH="/usr/local/go"
